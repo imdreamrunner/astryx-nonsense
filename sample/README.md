@@ -1,6 +1,6 @@
 # `sample/`: the demo's source
 
-The Astryx Nonsense app as it was bundled: React Native 0.88 and TypeScript, three tabs (`src/bubbles`, `src/deck`,
+The Astryx Instant Preview app as it was bundled: React Native 0.88 and TypeScript, three tabs (`src/bubbles`, `src/deck`,
 `src/disco`), words in `src/strings.ts`.
 
 It imports an unreleased exploration library (`@astryx-exploration/react-native` and its navigation and platform

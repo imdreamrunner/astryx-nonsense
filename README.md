@@ -1,8 +1,8 @@
-# Astryx Nonsense
+# Astryx Instant Preview
 
 **Play page:** https://imdreamrunner.github.io/astryx-nonsense/
 
-Three tabs of delightful visual nonsense, made to be opened in the Astryx app's Preview: scan the code on the page
+Three playful, visual tabs, made to be opened in the Astryx app's Preview: scan the code on the page
 with the app (**Apps → Scan**).
 
 | Tab | What it does |
@@ -36,7 +36,7 @@ Bundle URLs:
 - Android: https://imdreamrunner.github.io/astryx-nonsense/android/index.js
 
 The Preview link in the main QR code is
-`astryxneutral://preview?url=<iOS bundle URL>&module=PreviewNonsense&name=Astryx%20Nonsense`. Opening hosted
+`astryxneutral://preview?url=<iOS bundle URL>&module=PreviewNonsense&name=Astryx%20Instant%20Preview`. Opening hosted
 (https) bundles needs a version of the Astryx app that allows them (version 14 or later); older versions only open
 projects served from your local network.
 

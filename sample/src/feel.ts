@@ -1,5 +1,5 @@
 /**
- * Haptics for the nonsense: the library's haptics (the host's native engine through the platform package) when it is
+ * Haptics for the demo: the library's haptics (the host's native engine through the platform package) when it is
  * on; else, on Android only, a 12 ms Vibration from React Native core (iOS's Vibration ignores the length and buzzes
  * for 0.4 s); else nothing. Moments only: a pop, a card accepted, a theme change.
  */

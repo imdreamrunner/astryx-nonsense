@@ -1,6 +1,6 @@
-// Astryx Nonsense's words, in one catalog. Templates fill with the library's `formatMessage`.
+// Astryx Instant Preview's words, in one catalog. Templates fill with the library's `formatMessage`.
 export const STRINGS = {
-  appName: 'Astryx Nonsense',
+  appName: 'Astryx Instant Preview',
   tabBubbles: 'Bubbles',
   tabDeck: 'Deck',
   tabDisco: 'Disco',
@@ -44,6 +44,7 @@ export const STRINGS = {
   skipped: 'Skipped. Next: {text}',
   shuffled: 'Shuffled. Top card: {text}',
   acceptedCount: '{count} fates accepted',
+  acceptedOne: '1 fate accepted',
   fortunes: [
     'Your next meeting will be held by a goose.',
     'A sandwich will remember your name.',

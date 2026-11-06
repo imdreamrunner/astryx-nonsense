@@ -2,10 +2,11 @@
   "name": "astryx-preview-nonsense",
   "version": "0.0.1",
   "private": true,
-  "description": "Exploration-only sample for Astryx Preview: Astryx Nonsense, three tabs of visual nonsense (Liquid Glass bubbles, a 3D card deck, Theme Disco) built from the Astryx exploration library, a bare React Native 0.88 project with no native build of its own, run inside the doc-site app’s binary from its own Metro (port 8084).",
+  "description": "Exploration-only sample for Astryx Preview: Astryx Instant Preview, three playful tabs (Liquid Glass bubbles, a 3D card deck, Theme Disco) built from the Astryx exploration library, a bare React Native 0.88 project with no native build of its own, run inside the doc-site app’s binary from its own Metro (port 8084).",
   "scripts": {
     "start": "bash start-metro.sh",
     "typecheck": "tsc --noEmit",
+    "test": "node --test src/deck/physics.test.mjs",
     "preview-url": "node scripts/preview-url.mjs",
     "preview-qr": "node scripts/preview-qr.mjs"
   },

@@ -1,5 +1,5 @@
 /**
- * Astryx Nonsense: three tabs of visual nonsense built from the Astryx exploration library, made to run inside the
+ * Astryx Instant Preview: three playful tabs built from the Astryx exploration library, made to run inside the
  * doc-site app through Astryx Preview with nothing the host does not already include (no new native modules).
  *
  * - Bubbles: glass bubbles (the platform package's native material — UIGlassEffect on iOS 26 — with a frosted
@@ -25,9 +25,9 @@ import {DiscoScreen} from './disco/DiscoScreen';
 import {HOST_FONTS} from './feel';
 import {STRINGS} from './strings';
 
-export type NonsenseTabs = {Bubbles: undefined; Deck: undefined; Disco: undefined};
+export type AppTabs = {Bubbles: undefined; Deck: undefined; Disco: undefined};
 
-const Tabs = createBottomTabNavigator<NonsenseTabs>();
+const Tabs = createBottomTabNavigator<AppTabs>();
 
 function Navigation(): React.JSX.Element {
   const a = useAstryx();

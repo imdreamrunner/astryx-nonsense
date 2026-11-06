@@ -1,5 +1,5 @@
 /**
- * A busy, slowly moving layer for glass to bend: rows of big bold words ("NONSENSE", "BUBBLES", …) in the theme's
+ * A busy, slowly moving layer for glass to bend: rows of big bold words ("PREVIEW", "BUBBLES", …) in the theme's
  * categorical colours, scrolling in alternating directions on the native driver. Liquid Glass only reads when there
  * is detailed, high-contrast content behind it; this is that content. Decorative and touch-transparent; still under
  * Reduce Motion.
@@ -9,7 +9,7 @@ import {Animated, Easing, StyleSheet, Text as RNText, useWindowDimensions, View}
 import {textStyle, useAstryx} from '@astryx-exploration/react-native';
 import {withAlpha} from './Aurora';
 
-const WORDS = ['NONSENSE', 'BUBBLES', 'GLASS', 'WOBBLE', 'POP', 'ASTRYX', 'FIZZ', 'BOING'];
+const WORDS = ['PREVIEW', 'BUBBLES', 'GLASS', 'WOBBLE', 'POP', 'ASTRYX', 'INSTANT', 'BOING'];
 const TONES = ['dataCategoricalPink', 'dataCategoricalBlue', 'dataCategoricalOrange', 'dataCategoricalPurple', 'dataCategoricalTeal', 'dataCategoricalGreen'] as const;
 const ROWS = 9;
 

@@ -13,7 +13,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const site = 'https://imdreamrunner.github.io/astryx-nonsense';
 const preview = platform =>
   `astryxneutral://preview?url=${encodeURIComponent(`${site}/${platform}/index.js`)}` +
-  `&module=PreviewNonsense&name=${encodeURIComponent('Astryx Nonsense')}`;
+  `&module=PreviewNonsense&name=${encodeURIComponent('Astryx Instant Preview')}`;
 
 const codes = {
   'preview-ios.png': preview('ios'),
