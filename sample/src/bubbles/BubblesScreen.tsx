@@ -15,12 +15,11 @@
  * - Reduce Motion: no aurora drift, no bobbing, no particles; a pop fades and the new bubble appears in place.
  */
 import React from 'react';
-import {Animated, Easing, PanResponder, StyleSheet, Text as RNText, View} from 'react-native';
+import {AccessibilityInfo, Animated, Easing, PanResponder, StyleSheet, Text as RNText, View} from 'react-native';
 import type {LayoutChangeEvent} from 'react-native';
 import {Heading, MaterialSurface, Text, textStyle, useAstryx, useHaptics} from '@astryx-exploration/react-native';
 import {useAstryxInsets} from '@astryx-exploration/react-native-navigation';
 import {formatMessage} from '@astryx-exploration/react-native/i18n';
-import {useAnnounce} from '@astryx-exploration/react-native/internal';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Aurora, withAlpha} from '../Aurora';
 import {Marquee} from '../Marquee';
@@ -57,8 +56,6 @@ export function BubblesScreen(): React.JSX.Element {
   const [bubbles, setBubbles] = React.useState<BubbleModel[]>([]);
   const [bursts, setBursts] = React.useState<Burst[]>([]);
   const [popped, setPopped] = React.useState(0);
-  const [announcement, setAnnouncement] = React.useState<string | undefined>(undefined);
-  useAnnounce(announcement);
   const nextId = React.useRef(0);
   const labelCursor = React.useRef(0);
   const random = React.useRef(seeded(20261106));
@@ -147,7 +144,7 @@ export function BubblesScreen(): React.JSX.Element {
     if (!a.isReduceMotion) setBursts(list => [...list, {id: target.id, x: target.at.x + target.size / 2, y: target.at.y + target.size / 2}]);
     setBubbles([...others, fresh]);
     setPopped(n => n + 1);
-    setAnnouncement(formatMessage(STRINGS.popped, {label: target.label, next: fresh.label}));
+    AccessibilityInfo.announceForAccessibility(formatMessage(STRINGS.popped, {label: target.label, next: fresh.label}));
     if (!a.isReduceMotion) Animated.spring(fresh.position, {toValue: fresh.at, useNativeDriver: true, friction: 7, tension: 30}).start();
   };
 
@@ -163,7 +160,10 @@ export function BubblesScreen(): React.JSX.Element {
       <MaterialSurface material="material" variant="glass" fill={color.backgroundSurface} style={{paddingTop: safe.top + a.tokens.space.s3, paddingBottom: a.tokens.space.s3, paddingHorizontal: a.tokens.space.s4, gap: a.tokens.space.s1}}>
         <Heading level={1}>{STRINGS.bubblesTitle}</Heading>
         <Text type="supporting" color="secondary">
-          {`${STRINGS.bubblesHint}  ·  ${formatMessage(STRINGS.poppedCount, {count: popped})}`}
+          {STRINGS.bubblesHint}
+        </Text>
+        <Text type="supporting" color="secondary">
+          {formatMessage(STRINGS.poppedCount, {count: popped})}
         </Text>
       </MaterialSurface>
       <View style={[styles.fill, {marginBottom: tabClearance(chrome.bottom, safe.bottom) + a.tokens.space.s2}]} onLayout={onLayout}>

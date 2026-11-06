@@ -1,23 +1,22 @@
 /**
  * 3D Card Deck: a stack of tilted cards with absurd fortunes.
  *
- * - The top card follows the finger in 3D (`perspective` with `rotateY` / `rotateX` from the drag, and a little
- *   `rotateZ`), all on transforms; the cards under it wait, fanned and stepped.
+ * - The top card follows the finger, tilting (`rotateZ`) and lifting (scale) with the drag — a flat tilt, so it can
+ *   never cut into the cards under it — over a fanned, stepped stack.
  * - Swipe right past a third of the width (or fling): the card glows and flies off tilted, with the `success`
  *   haptic; the fortune counts as accepted and goes to the bottom of the deck (the deck never runs out).
  * - Swipe left: the card slides away and tucks in at the back. A short drag springs back.
  * - Shuffle riffles the visible cards and deals a new order. Accept / Skip / Shuffle are buttons too (gestures are
  *   shortcuts), and the top card's accessibility actions are Accept and Skip; results are announced.
  * - Reduce Motion: no tilt or fly-off; the next card simply appears.
- * - Native driver: every card has the same transform keys in the same order (perspective first), and the top card's
+ * - Native driver: every card has the same transform keys in the same order, and the top card's
  *   drag values are new for each top card, so nothing is reset under a card that is still drawn.
  */
 import React from 'react';
-import {Animated, Easing, PanResponder, StyleSheet, Text as RNText, useWindowDimensions, View} from 'react-native';
-import {Button, Heading, HStack, Text, textStyle, useAstryx, useHaptics} from '@astryx-exploration/react-native';
+import {AccessibilityInfo, Animated, Easing, PanResponder, StyleSheet, Text as RNText, useWindowDimensions, View} from 'react-native';
+import {Button, Heading, Text, textStyle, useAstryx, useHaptics} from '@astryx-exploration/react-native';
 import {useAstryxInsets} from '@astryx-exploration/react-native-navigation';
 import {formatMessage} from '@astryx-exploration/react-native/i18n';
-import {useAnnounce} from '@astryx-exploration/react-native/internal';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Aurora, withAlpha} from '../Aurora';
 import {feel, seeded, tabClearance} from '../feel';
@@ -36,8 +35,6 @@ export function DeckScreen(): React.JSX.Element {
   const [order, setOrder] = React.useState<number[]>(() => fortunes.map((_, index) => index));
   const [accepted, setAccepted] = React.useState(0);
   const [isBusy, setBusy] = React.useState(false);
-  const [announcement, setAnnouncement] = React.useState<string | undefined>(undefined);
-  useAnnounce(announcement);
   // The top card's values are made fresh for each top card. Resetting shared values instead moved the departing card
   // back to the centre for a frame before React re-rendered the new order (the jump people saw).
   const top = order[0]!;
@@ -51,7 +48,7 @@ export function DeckScreen(): React.JSX.Element {
     if (isBusy) return;
     const text = fortunes[top]!;
     feel(haptics, 'success');
-    setAnnouncement(formatMessage(STRINGS.accepted, {text}));
+    AccessibilityInfo.announceForAccessibility(formatMessage(STRINGS.accepted, {text}));
     const finish = () => {
       setOrder(current => [...current.slice(1), current[0]!]);
       setAccepted(n => n + 1);
@@ -72,7 +69,7 @@ export function DeckScreen(): React.JSX.Element {
   const skip = React.useCallback(() => {
     if (isBusy) return;
     const next = fortunes[order[1] ?? top]!;
-    setAnnouncement(formatMessage(STRINGS.skipped, {text: next}));
+    AccessibilityInfo.announceForAccessibility(formatMessage(STRINGS.skipped, {text: next}));
     const finish = () => {
       setOrder(current => [...current.slice(1), current[0]!]);
       setBusy(false);
@@ -94,7 +91,7 @@ export function DeckScreen(): React.JSX.Element {
       [next[i], next[j]] = [next[j]!, next[i]!];
     }
     feel(haptics, 'tick');
-    setAnnouncement(formatMessage(STRINGS.shuffled, {text: fortunes[next[0]!]!}));
+    AccessibilityInfo.announceForAccessibility(formatMessage(STRINGS.shuffled, {text: fortunes[next[0]!]!}));
     if (reduced) {
       setOrder(next);
       return;
@@ -132,9 +129,10 @@ export function DeckScreen(): React.JSX.Element {
   const colors = a.tokens.color as unknown as Record<string, string>;
   const fortuneText = textStyle(a, 'large');
 
-  const tiltY = reduced ? '0deg' : drag.x.interpolate({inputRange: [-width, 0, width], outputRange: ['-28deg', '0deg', '28deg']});
-  const tiltX = reduced ? '0deg' : drag.y.interpolate({inputRange: [-200, 0, 200], outputRange: ['14deg', '0deg', '-14deg']});
-  const spin = reduced ? '0deg' : drag.x.interpolate({inputRange: [-width, 0, width], outputRange: ['-10deg', '0deg', '10deg']});
+  // Flat tilt only: rotateZ and a lift. rotateY/rotateX put part of the top card at negative depth, where the device
+  // drew it behind the card below (cut along a slanted line); a 2D tilt can never intersect another card.
+  const spin = reduced ? '0deg' : drag.x.interpolate({inputRange: [-width, 0, width], outputRange: ['-16deg', '0deg', '16deg']});
+  const lift = reduced ? 1 : drag.x.interpolate({inputRange: [-width, -40, 0, 40, width], outputRange: [1.06, 1.04, 1, 1.04, 1.06], extrapolate: 'clamp'});
 
   const visible = order.slice(0, VISIBLE);
   return (
@@ -143,7 +141,10 @@ export function DeckScreen(): React.JSX.Element {
       <View style={{paddingTop: safe.top + a.tokens.space.s3, paddingHorizontal: a.tokens.space.s4, gap: a.tokens.space.s1}}>
         <Heading level={1}>{STRINGS.deckTitle}</Heading>
         <Text type="supporting" color="secondary">
-          {`${STRINGS.deckHint}  ·  ${formatMessage(STRINGS.acceptedCount, {count: accepted})}`}
+          {STRINGS.deckHint}
+        </Text>
+        <Text type="supporting" color="secondary">
+          {formatMessage(STRINGS.acceptedCount, {count: accepted})}
         </Text>
       </View>
       <View style={[styles.fill, styles.center]}>
@@ -161,13 +162,10 @@ export function DeckScreen(): React.JSX.Element {
               const riffleX = riffle.interpolate({inputRange: [0, 0.25, 0.5, 0.75, 1], outputRange: [0, (depth % 2 ? 1 : -1) * 60, 0, (depth % 2 ? -1 : 1) * 40, 0]});
               const riffleTurn = riffle.interpolate({inputRange: [0, 0.5, 1], outputRange: ['0deg', `${(depth % 2 ? 1 : -1) * 12}deg`, '0deg']});
               const transform = [
-                {perspective: 900},
                 {translateX: isTop ? drag.x : 0},
                 {translateY: isTop ? drag.y : restY},
-                {scale: isTop ? 1 : restScale},
+                {scale: isTop ? lift : restScale},
                 {rotateZ: isTop ? spin : `${(depth % 2 ? 1 : -1) * depth * 1.5}deg`},
-                {rotateY: isTop ? tiltY : '0deg'},
-                {rotateX: isTop ? tiltX : '0deg'},
                 {translateX: riffleX},
                 {rotateZ: riffleTurn},
               ];
@@ -183,7 +181,7 @@ export function DeckScreen(): React.JSX.Element {
                   accessibilityActions={isTop ? [{name: 'accept', label: STRINGS.accept}, {name: 'skip', label: STRINGS.skip}] : undefined}
                   onAccessibilityAction={isTop ? event => (event.nativeEvent.actionName === 'accept' ? accept() : skip()) : undefined}
                   testID={isTop ? 'nonsense-deck-top' : undefined}
-                  style={[StyleSheet.absoluteFill, {transform}]}>
+                  style={[StyleSheet.absoluteFill, {zIndex: VISIBLE - depth, transform}]}>
                   <View
                     style={[
                       StyleSheet.absoluteFill,
@@ -196,7 +194,7 @@ export function DeckScreen(): React.JSX.Element {
                         boxShadow: `0 12px 28px ${withAlpha(a.tokens.color.backgroundInverted, 0.35)}`,
                       },
                     ]}>
-                    <RNText style={[textStyle(a, 'label'), {color: a.tokens.color.onDark, opacity: 0.8}]}>{`No. ${fortune + 1}`}</RNText>
+                    <RNText style={[textStyle(a, 'label'), {color: a.tokens.color.onDark, opacity: 0.8}]}>{formatMessage(STRINGS.cardNumber, {index: fortune + 1})}</RNText>
                     <View style={[styles.fill, styles.centerStart]}>
                       <RNText style={[fortuneText, {color: a.tokens.color.onDark, fontSize: (fortuneText.fontSize ?? 19) * 1.25, lineHeight: (fortuneText.lineHeight ?? (fortuneText.fontSize ?? 19) * 1.3) * 1.25}]}>{fortunes[fortune]}</RNText>
                     </View>
@@ -214,11 +212,11 @@ export function DeckScreen(): React.JSX.Element {
         </View>
       </View>
       <View style={{paddingHorizontal: a.tokens.space.s4, paddingBottom: tabClearance(chrome.bottom, safe.bottom) + a.tokens.space.s3}}>
-        <HStack gap={2} justify="center">
+        <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: a.tokens.space.s2}}>
           <Button id="nonsense-deck-skip" label={STRINGS.skip} variant="secondary" icon="chevronLeft" onClick={skip} isDisabled={isBusy} />
           <Button id="nonsense-deck-shuffle" label={STRINGS.shuffle} variant="secondary" icon="shuffle" onClick={shuffle} isDisabled={isBusy} />
           <Button id="nonsense-deck-accept" label={STRINGS.accept} variant="primary" icon="check" onClick={accept} isDisabled={isBusy} />
-        </HStack>
+        </View>
       </View>
     </View>
   );

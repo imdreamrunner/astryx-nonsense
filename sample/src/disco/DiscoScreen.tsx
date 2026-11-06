@@ -12,8 +12,9 @@
  * - Reduce Motion: no pulsing, no spotlights; themes only cross-fade.
  */
 import React from 'react';
-import {Animated, Easing, ScrollView, StyleSheet, View} from 'react-native';
+import {AccessibilityInfo, Animated, Easing, ScrollView, StyleSheet, View} from 'react-native';
 import {
+  ASTRYX_THEMES,
   Avatar,
   AvatarGroup,
   Badge,
@@ -34,7 +35,6 @@ import {
 } from '@astryx-exploration/react-native';
 import {useAstryxInsets} from '@astryx-exploration/react-native-navigation';
 import {formatMessage} from '@astryx-exploration/react-native/i18n';
-import {useAnnounce} from '@astryx-exploration/react-native/internal';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Aurora, withAlpha} from '../Aurora';
 import {useDisco} from '../disco';
@@ -44,7 +44,6 @@ import {STRINGS} from '../strings';
 /** 120 bpm. */
 export const BEAT_MS = 500;
 const BEATS_PER_THEME = 4;
-const DANCERS = ['Ada Brooks', 'Kai Moreno', 'Lena Ito', 'Omar Haddad', 'Pia Novak', 'Ravi Shah'];
 
 export function DiscoScreen(): React.JSX.Element {
   const a = useAstryx();
@@ -58,8 +57,6 @@ export function DiscoScreen(): React.JSX.Element {
   const [lights, setLights] = React.useState(true);
   const [genre, setGenre] = React.useState<readonly string[]>(['funk']);
   const [joined, setJoined] = React.useState(false);
-  const [announcement, setAnnouncement] = React.useState<string | undefined>(undefined);
-  useAnnounce(announcement);
   const reduced = a.isReduceMotion;
 
   const change = React.useCallback(() => {
@@ -74,7 +71,7 @@ export function DiscoScreen(): React.JSX.Element {
       first.current = false;
       return;
     }
-    setAnnouncement(formatMessage(STRINGS.themeAnnouncement, {theme: entry.label}));
+    AccessibilityInfo.announceForAccessibility(formatMessage(STRINGS.themeAnnouncement, {theme: entry.label}));
   }, [entry.label]);
 
   // Party: a beat every BEAT_MS (tiles pulse), a theme every BEATS_PER_THEME beats.
@@ -147,12 +144,12 @@ export function DiscoScreen(): React.JSX.Element {
             {reduced ? STRINGS.calm : STRINGS.discoHint}
           </Text>
         </VStack>
-        <MaterialSurface material="material" variant="glass" fill={color.backgroundSurface} cornerRadius={radius.page} style={{borderRadius: radius.page, padding: space.s4, gap: space.s1}} accessible accessibilityLiveRegion="polite" accessibilityLabel={formatMessage(STRINGS.nowPlaying, {theme: entry.label})} testID="nonsense-disco-marquee">
+        <MaterialSurface material="material" variant="glass" fill={color.backgroundSurface} cornerRadius={radius.page} style={{borderRadius: radius.page, padding: space.s4, gap: space.s1}} accessible accessibilityLabel={formatMessage(STRINGS.nowPlaying, {theme: entry.label})} testID="nonsense-disco-marquee">
           <Text type="supporting" color="secondary">
             {formatMessage(STRINGS.nowPlaying, {theme: ''}).trim()}
           </Text>
           <Text type="display-3" weight="bold">
-            {`${entry.label}  ${index + 1}/8`}
+            {`${entry.label}  ${formatMessage(STRINGS.themePosition, {index: index + 1, count: ASTRYX_THEMES.length})}`}
           </Text>
           <Text type="supporting" color="secondary" maxLines={2}>
             {entry.description}
@@ -192,29 +189,28 @@ export function DiscoScreen(): React.JSX.Element {
                     {STRINGS.cardBody}
                   </Text>
                 </VStack>
-                <Avatar name="Disco Duck" size="lg" />
+                <Avatar name={STRINGS.cardAvatar} size="lg" />
               </HStack>
               <VStack gap={1}>
                 <Text type="supporting" color="secondary">
                   {STRINGS.dancers}
                 </Text>
                 <AvatarGroup size="md">
-                  {DANCERS.map(name => (
+                  {STRINGS.dancerNames.map(name => (
                     <Avatar key={name} name={name} />
                   ))}
                 </AvatarGroup>
               </VStack>
-              <ProgressBar label={STRINGS.volume} value={volume} />
+              <ProgressBar label={STRINGS.volumeMeter} value={volume} />
               <Slider id="nonsense-disco-volume" label={STRINGS.volume} value={volume} onChange={value => setVolume(Array.isArray(value) ? value[0]! : (value as number))} min={0} max={100} />
               <HStack gap={3} align="center" justify="between">
                 <Text type="label">{STRINGS.lights}</Text>
                 <Switch id="nonsense-disco-lights" label={STRINGS.lights} isLabelHidden value={lights} onChange={setLights} />
               </HStack>
-              <ChipGroup label="Genre" type="single" value={genre} onChange={setGenre} layout="wrap">
-                <Chip value="funk" label="Funk" />
-                <Chip value="disco" label="Disco" />
-                <Chip value="polka" label="Polka" />
-                <Chip value="dial-up" label="Dial-up" />
+              <ChipGroup label={STRINGS.genre} type="single" value={genre} onChange={setGenre} layout="wrap">
+                {STRINGS.genres.map(item => (
+                  <Chip key={item.value} value={item.value} label={item.label} />
+                ))}
               </ChipGroup>
               <HStack gap={2}>
                 <Button id="nonsense-disco-join" label={joined ? STRINGS.leave : STRINGS.join} variant={joined ? 'secondary' : 'primary'} onClick={() => setJoined(j => !j)} />
