@@ -25,15 +25,15 @@ with the app (**Apps → Scan**).
 | Path | Contents |
 |---|---|
 | `docs/` | The GitHub Pages site: the landing page, screenshots and QR codes. |
-| `docs/ios/index.bundle`, `docs/ios/assets/` | Prebuilt production bundle for iOS (`dev=false`, minified), with its image assets next to it. |
-| `docs/android/index.bundle`, `docs/android/drawable-*/`, `docs/android/raw/` | The same for Android, with assets in the layout `react-native bundle` writes. |
+| `docs/ios/index.js`, `docs/ios/assets/` | Prebuilt production bundle for iOS (`dev=false`, minified), with its image assets next to it. |
+| `docs/android/index.js`, `docs/android/drawable-*/`, `docs/android/raw/` | The same for Android, with assets in the layout `react-native bundle` writes. |
 | `sample/` | The demo's source (React Native 0.88, TypeScript). It depends on the unreleased exploration library, so it does not install or build on its own; it is here so you can read it. |
 | `tools/make-qr.mjs` | Regenerates the QR codes in `docs/qr/`. |
 
 Bundle URLs:
 
-- iOS: https://imdreamrunner.github.io/astryx-nonsense/ios/index.bundle
-- Android: https://imdreamrunner.github.io/astryx-nonsense/android/index.bundle
+- iOS: https://imdreamrunner.github.io/astryx-nonsense/ios/index.js
+- Android: https://imdreamrunner.github.io/astryx-nonsense/android/index.js
 
 The Preview link in the main QR code is
 `astryxneutral://preview?url=<iOS bundle URL>&module=PreviewNonsense&name=Astryx%20Nonsense`. Opening hosted

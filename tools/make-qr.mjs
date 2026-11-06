@@ -12,7 +12,7 @@ import {encodeQr, renderPng} from '../sample/scripts/qr.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const site = 'https://imdreamrunner.github.io/astryx-nonsense';
 const preview = platform =>
-  `astryxneutral://preview?url=${encodeURIComponent(`${site}/${platform}/index.bundle`)}` +
+  `astryxneutral://preview?url=${encodeURIComponent(`${site}/${platform}/index.js`)}` +
   `&module=PreviewNonsense&name=${encodeURIComponent('Astryx Nonsense')}`;
 
 const codes = {

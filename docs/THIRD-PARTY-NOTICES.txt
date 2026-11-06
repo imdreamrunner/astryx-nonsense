@@ -1,4 +1,4 @@
-Notices for the code compiled into ios/index.bundle and android/index.bundle (Astryx Nonsense, a playful exploration demo).
+Notices for the code compiled into ios/index.js and android/index.js (Astryx Nonsense, a playful exploration demo).
 
 ==============================================================================
 Astryx (https://github.com/meta/astryx)
