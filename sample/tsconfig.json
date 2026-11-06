@@ -1,0 +1,16 @@
+{
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "types": ["react", "node"],
+    "paths": {
+      "@astryx-exploration/react-native": ["../../packages/react-native/src/index.ts"],
+      "@astryx-exploration/react-native/*": ["../../packages/react-native/src/*/index.ts"],
+      "@astryx-exploration/react-native-navigation": ["../../packages/react-native-navigation/src/index.ts"],
+      "@astryx-exploration/react-native-platform": ["../../packages/react-native-platform/src/index.ts"],
+      "react-native": ["./node_modules/react-native/types_generated/index.d.ts"],
+      "*": ["./node_modules/@types/*", "./node_modules/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules"]
+}

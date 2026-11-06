@@ -1,0 +1,51 @@
+{
+  "name": "astryx-preview-nonsense",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Exploration-only sample for Astryx Preview: Astryx Nonsense, three tabs of visual nonsense (Liquid Glass bubbles, a 3D card deck, Theme Disco) built from the Astryx exploration library, a bare React Native 0.88 project with no native build of its own, run inside the doc-site app’s binary from its own Metro (port 8084).",
+  "scripts": {
+    "start": "bash start-metro.sh",
+    "typecheck": "tsc --noEmit",
+    "preview-url": "node scripts/preview-url.mjs",
+    "preview-qr": "node scripts/preview-qr.mjs"
+  },
+  "dependencies": {
+    "@astryx-exploration/react-native": "file:../../packages/react-native",
+    "@astryx-exploration/react-native-navigation": "file:../../packages/react-native-navigation",
+    "@astryx-exploration/react-native-platform": "file:../../packages/react-native-platform",
+    "@callstack/liquid-glass": "0.8.2",
+    "@react-navigation/bottom-tabs": "8.0.0-alpha.57",
+    "@react-navigation/native": "8.0.0-alpha.51",
+    "@react-navigation/native-stack": "8.0.0-alpha.59",
+    "react": "19.3.0",
+    "react-native": "0.88.0",
+    "react-native-safe-area-context": "5.11.1",
+    "react-native-screens": "5.0.0-beta.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/runtime": "^7.25.0",
+    "@react-native-community/cli": "20.2.0",
+    "@react-native/babel-preset": "0.88.0",
+    "@react-native/metro-config": "0.88.0",
+    "@react-native/typescript-config": "0.88.0",
+    "@types/react": "^19.2.0",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22.11.0"
+  },
+  "overrides": {
+    "react-dom": "19.3.0",
+    "@react-navigation/native-stack": {
+      "react-native-screens": "$react-native-screens"
+    },
+    "@react-navigation/bottom-tabs": {
+      "react-native-screens": "$react-native-screens"
+    },
+    "@react-navigation/elements": {
+      "react-native-screens": "$react-native-screens"
+    }
+  }
+}
